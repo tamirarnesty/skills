@@ -41,6 +41,8 @@ Look for the originating spec, in this order:
 
 Search the repo for every file that documents how code should be written. Each of these that exists must be on the list: `CODING_STANDARDS.md`, `CONTRIBUTING.md`, `docs/STANDARDS.md`, `AGENTS.md`, `CLAUDE.md`. When `AGENTS.md` points to an org standards manifest, follow it and add the standards it selects for this change.
 
+The user's **context system** is a standards source too: the place their recorded preferences, conventions, and past decisions live, such as a memory vault (an Obsidian vault, through its connector or its repo), a Notion workspace, or the harness's memory files. Search it for the topics this diff touches and add every preference or decision that bears on the change, citing the note it came from. A recorded preference ranks with a documented repo standard.
+
 On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below: a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
 
 - **The repo overrides.** A documented repo standard always wins; where it endorses something the baseline would flag, suppress the smell.
@@ -68,7 +70,7 @@ Issue all three sub-agent calls together, in the foreground, and aggregate the r
 **Standards sub-agent prompt** should include:
 
 - The full diff command and commit list.
-- The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full (the sub-agent has no other access to it).
+- The list of standards-source files you found in step 3, the context-system preferences with their note citations, **plus the smell baseline from step 3** pasted in full (the sub-agent has no other access to it).
 - The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
 
 **Spec sub-agent prompt** should include:
@@ -80,13 +82,13 @@ Issue all three sub-agent calls together, in the foreground, and aggregate the r
 **Simplicity sub-agent prompt** should include:
 
 - The diff command and commit list.
-- The repo's GitHub org (from `gh repo view --json owner`) and the repo's dependency manifests (`package.json`, `pyproject.toml`, `mix.exs`, etc.).
-- The brief: "Find code a reviewer would ask to be simpler, and for each finding name the existing thing to use instead. Start by searching, before judging anything: read the dependency manifests, then run `gh search code --owner <org> <term>` for each new helper, pattern, or concept the diff introduces, and check the framework's own features. Look through four lenses:
+- The repo's GitHub org (from `gh repo view --json owner`), how to reach the user's context system in this session, and the repo's dependency manifests (`package.json`, `pyproject.toml`, `mix.exs`, etc.).
+- The brief: "Find code a reviewer would ask to be simpler, and for each finding name the existing thing to use instead. Start by searching for precedent, before judging anything: read the dependency manifests; run `gh search code --owner <org> <term>` for each new helper, pattern, or concept the diff introduces; search the user's context system for a recorded decision or pattern on the same problem; and check the framework's own features. Look through four lenses:
   (a) **Simplest solution**: a smaller or more direct shape would do the same job, or the change introduces a new pattern where the org or repo already has one for this problem; name the existing pattern with a link.
   (b) **Hand-rolled code**: custom logic that a dependency already in the manifest, an org library, a framework feature, or a battle-tested package provides; name it.
   (c) **Low-value tests**: tests that pass whether or not the behaviour works: tautological (asserting what the test itself set up), contract or snapshot tests of internals, tests of mocks, tests importing private internals, or tests that a removed thing stays removed. A test earns its place when breaking the behaviour turns it red.
   (d) **Comments**: apply the deletion test to every added or changed comment and docstring: if deleting it loses nothing a reader needs, it goes. A comment that explains what code does points at a naming or structure fix; ticket keys in code belong only in a `TODO(KEY)` for a real follow-up.
-  Report each finding with the lens, `file:line`, the issue, and the replacement. End with a **Searched** line listing each org search you ran and what it turned up; the report is complete only with that line. Under 400 words."
+  Report each finding with the lens, `file:line`, the issue, and the replacement. End with a **Searched** line listing each org and context-system search you ran and what it turned up; the report is complete only with that line. Under 400 words."
 
 If the spec is missing, skip the Spec sub-agent and note this in the final report.
 
