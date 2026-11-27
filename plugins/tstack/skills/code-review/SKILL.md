@@ -1,6 +1,9 @@
 ---
 name: code-review
 description: "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\"."
+metadata:
+  upstream: "mattpocock/skills@a496f55 skills/engineering/code-review"
+  changes: "Stacked-PR fixed point, AGENTS.md and org standards in the Standards sources, accepted scope reviewed for quality instead of flagged."
 ---
 
 Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
@@ -18,6 +21,8 @@ The issue tracker should have been provided to you. If not, tell the user to run
 
 Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.). If they didn't specify one, ask for it.
 
+For a PR in a stack, the fixed point is the parent PR's head, not `main`: read it from `gh pr view <n> --json baseRefName`, and `git fetch` first so both tips are current. Before calling code unused or out of scope, read the other open PRs in the stack; a later PR often consumes it.
+
 Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..HEAD --oneline`.
 
 Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here, not inside two parallel sub-agents.
@@ -33,7 +38,7 @@ Look for the originating spec, in this order:
 
 ### 3. Identify the standards sources
 
-Search the repo for every file that documents how code should be written. When `CODING_STANDARDS.md` or `CONTRIBUTING.md` exists, it must be on the list.
+Search the repo for every file that documents how code should be written. Each of these that exists must be on the list: `CODING_STANDARDS.md`, `CONTRIBUTING.md`, `docs/STANDARDS.md`, `AGENTS.md`, `CLAUDE.md`. When `AGENTS.md` points to an org standards manifest, follow it and add the standards it selects for this change.
 
 On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below: a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
 
@@ -69,7 +74,7 @@ Issue both sub-agent calls together, in the foreground, and aggregate the report
 
 - The diff command and commit list.
 - The path or fetched contents of the spec.
-- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
+- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep), except changes the PR description or the user marks as intended: review those for quality instead; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
 
 If the spec is missing, skip the Spec sub-agent and note this in the final report.
 
