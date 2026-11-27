@@ -13,7 +13,7 @@ This repo is the `tstack` plugin: one set of skills that loads in Claude Code, C
 - Read the `writing-for-agents` skill first.
 - Write one skill for every harness. Name a capability once with each harness's tool: the question tool (`AskUserQuestion` in Claude Code, `AskQuestion` in Cursor), the subagent tool (`Agent` in Claude Code, `Task` in Cursor). If a skill would need different instructions per harness, raise it before writing a second copy.
 - Frontmatter both harnesses read: `name`, `description`, `disable-model-invocation`, `paths`, `metadata`. Claude Code-only keys (`argument-hint`, `context`, `allowed-tools`, `model`) are fine; other harnesses ignore them.
-- A fork keeps the upstream skill's name and records `metadata.upstream` (source and commit) and `metadata.changes` (one line).
+- Name skills for how they read after `/tstack:`: a short verb or noun, no `to-` prefixes, no author names. A fork records `metadata.upstream` (source, commit, and upstream path, which carries the upstream name) and `metadata.changes` (one line, including any rename).
 
 ## Verify
 

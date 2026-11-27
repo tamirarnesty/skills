@@ -1,5 +1,5 @@
 ---
-name: tamir-voice
+name: voice
 description: >-
   Tamir's writing voice for anything other humans read: Slack messages, DMs,
   thread replies, PR review asks, standup notes, bug write-ups, and product
