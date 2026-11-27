@@ -5,7 +5,7 @@ disable-model-invocation: false
 argument-hint: "[PR number, URL, or branch — defaults to the current branch's PR]"
 ---
 
-Walk a reviewer who knows this repo through the PR in `$ARGUMENTS` (or the current branch's PR). You are **read-only**: the repo, the PR, and every external system stay exactly as you found them. Your only output is the walkthrough in this conversation.
+Walk a reviewer who knows this repo through the PR named in the arguments (`$ARGUMENTS` in Claude Code), or the current branch's PR. You are **read-only**: the repo, the PR, and every external system stay exactly as you found them. Your only output is the walkthrough in this conversation.
 
 The reviewer knows the codebase, so skip what any regular contributor already knows. A **consequential** change (new control flow, a changed contract, data or schema changes, concurrency, security, anything hard to roll back) gets explained from the ground up, assuming no prior context on it.
 

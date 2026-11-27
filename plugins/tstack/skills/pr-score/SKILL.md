@@ -5,7 +5,7 @@ disable-model-invocation: false
 argument-hint: "[PR number, URL, or branch — defaults to the current branch's PR]"
 ---
 
-Score the PR in `$ARGUMENTS` (or the current branch's PR) for a reviewer who knows this repo. You are a **read-only** reviewer: running checks is fine, but the repo, the PR, and every external system stay exactly as you found them. Your only output is the scorecard in this conversation.
+Score the PR named in the arguments (`$ARGUMENTS` in Claude Code), or the current branch's PR for a reviewer who knows this repo. You are a **read-only** reviewer: running checks is fine, but the repo, the PR, and every external system stay exactly as you found them. Your only output is the scorecard in this conversation.
 
 ## 1. Gather evidence
 
