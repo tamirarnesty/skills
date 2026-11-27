@@ -46,18 +46,20 @@ Merge the reports. Findings that share a root cause become one issue; order the 
 ```markdown
 ## Issues
 
-1. **<issue in a few words>** ([`file:line`](<permalink>))
+1. **<issue in a few words>** · <tag> ([`file:line`](<permalink>))
    <what is wrong and what it causes, one or two sentences>
    **Fix:** <the change at the root cause, naming the existing pattern, library, or utility when there is one>
 
 ## Smaller fixes
 
-- [`file:line`](<permalink>): <what to change>
+- [`file:line`](<permalink>) · <tag>: <what to change>
 
 ## Next steps
 
 <which fixes to make now and in what order, which issue needs the user's decision first, and what to re-review after>
 ```
+
+The **tag** names what kind of problem it is, carried over from the axis report: the smell (Duplicated Code, Feature Envy), the Simplicity lens (hand-rolled code, low-value test, comment), or the rule it breaks (`STANDARDS.md`, or the context-system note). An issue merged from several findings lists each tag. Smaller fixes carry a tag the same way when they have one.
 
 Each fix changes the source of the problem: the design, type, or shared code that lets it happen. When several issues share one source, the next steps fix it once.
 
