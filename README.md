@@ -29,7 +29,7 @@ Invoke as `/tstack:<name>` in Claude Code and `/<name>` in Cursor. Model-invoked
 
 ### Vendored unchanged
 
-From [mattpocock/skills](https://github.com/mattpocock/skills) 1.3.2, so the upstream plugin can be disabled without losing anything: `ask-matt`, `codebase-design`, `diagnosing-bugs`, `domain-modeling`, `grill-me`, `grill-with-docs`, `handoff`, `implement`, `implement-spec`, `improve-codebase-architecture`, `pr`, `prototype`, `research`, `retro`, `setup-matt-pocock-skills`, `tdd`, `teach`, `to-questionnaire`, `to-spec`, `to-tickets`, `triage`, `wait-what`, `wayfinder`, `wizard`, `writing-for-agents`. Licenses and upstream commits are in `plugins/tstack/vendor/`.
+From [mattpocock/skills](https://github.com/mattpocock/skills) 1.3.2, covering every upstream skill you have used, so the upstream plugin can be disabled: `codebase-design`, `domain-modeling`, `grill-me`, `grill-with-docs`, `handoff`, `implement`, `improve-codebase-architecture`, `pr`, `prototype`, `retro`, `setup-matt-pocock-skills`, `tdd`, `teach`, `to-spec`, `to-tickets`, `wizard`, `writing-for-agents`. Licenses and upstream commits are in `plugins/tstack/vendor/`.
 
 ## Cutover
 
