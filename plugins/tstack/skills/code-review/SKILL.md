@@ -22,7 +22,7 @@ Record `git diff <fixed-point>...<head>` and `git log <fixed-point>..<head> --on
 
 ## 2. Gather the sources
 
-- **Spec**: the ticket linked from the PR, branch, or commit messages (read through the tracker doc; when there is none, tell the user to run `/setup`), else a spec path the user gave, else a spec under `docs/`, `specs/`, or `.scratch/` matching the branch. With none, ask the user; if there isn't one, the Spec axis reports "no spec available".
+- **Spec**: the ticket linked from the PR, branch, or commit messages (read through the tracker doc; when there is none, tell the user to run `/setup`), else a spec path the user gave, else a spec under `docs/`, `specs/`, or `.scratch/` matching the branch, else the PR description (and the descriptions of the PRs it stacks on). Every PR has a spec this way; ask the user only when reviewing a branch or local diff with none of these.
 - **Standards**: every file in the repo that says how code is written, including each of `CODING_STANDARDS.md`, `CONTRIBUTING.md`, `docs/STANDARDS.md`, `AGENTS.md`, and `CLAUDE.md` that exists, plus the standards an org manifest selects when `AGENTS.md` points to one.
 - **Context system**: the user's recorded preferences and past decisions, wherever this session reaches them (a memory vault through its connector or repo, a Notion workspace, or the harness's memory files). Collect each note that bears on what the diff touches, with its citation. A recorded preference ranks with a documented repo standard.
 - **Precedent inputs**: the repo's GitHub org (`gh repo view --json owner`) and its dependency manifests (`package.json`, `pyproject.toml`, `mix.exs`, and so on).
