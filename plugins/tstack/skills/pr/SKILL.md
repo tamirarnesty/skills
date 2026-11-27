@@ -43,6 +43,8 @@ Steps:
 **Blast Radius:** <short label>. <bullets only if non-obvious>
 ```
 
+The body describes the change as it stands, for the reviewer. Anything still open for the author (a question, a decision, a follow-up to action) goes to the user in chat before the body is written, and is settled there. The template's five sections are the whole body; a Notes, Open items, or To-do section has no place in it.
+
 The PR body is done when every placeholder holds a real value (a fetched ticket link, a permalink at the head commit, a URL that resolves) or its line is gone.
 
 ## Summary
