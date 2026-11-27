@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-Every finding in the review cites a file and line (file:line or a permalink with a line).
+Every issue about code cites a file and line; issues about the PR description or ticket may cite those instead.
