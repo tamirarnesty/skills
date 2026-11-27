@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: ploutizo-filter-bar
+expected_outcome: |
+  A three-axis review of a personal-repo feature PR with file:line findings, hand-rolled UI or filtering logic compared against existing dependencies, and a closing summary.

@@ -6,7 +6,7 @@ This repo is the `tstack` plugin: one set of skills that loads in Claude Code, C
 
 - `plugins/tstack/skills/<name>/SKILL.md`, one level deep. `name` matches the folder.
 - Manifests: `plugins/tstack/plugin.json` (Agent Plugins standard, schema fields only), `plugins/tstack/.claude-plugin/plugin.json`, `plugins/tstack/.cursor-plugin/plugin.json`, and a `marketplace.json` per harness at the root. Keep `name`, `version` and `description` identical across all five; bump `version` in all of them together.
-- `plugins/tstack/vendor/<upstream>/`: the license and upstream commit for each forked source.
+- `THIRD_PARTY_LICENSES.md`: the license of every source a skill was copied from. Add a source's license here when you copy its first skill.
 
 ## Writing a skill
 
