@@ -2,169 +2,75 @@
 name: pr
 description: "Use when writing a PR body."
 metadata:
-  credits:
-    skill: show-me
-    author: Dex Horthy
-    organisation: Humanlayer
-    url: "https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md"
+  upstream: "mattpocock/skills@a496f55 skills/engineering/pr"
+  changes: "Tamir's template: Summary, Key changes, Evidence, Testing, Merge Danger; visuals come from show-me."
 ---
 
-Use this template for writing the PR body:
+Write every PR body with this template, all five sections in this order. The reader is a reviewer who has not opened the diff yet: each line gives them the overview, or a fact they would otherwise have to dig out of the code. Use the domain language from `GLOSSARY.md` when the repo has one.
 
 ```markdown
 ## Summary
 
-<diagram, diff-sketch, or tree>
+- Issue: [<ticket-key>](<ticket link>)
+
+<1-2 sentences>
+
+## Key changes
+
+**Intended behaviour changes**
+
+<optional visual>
+
+- **<area>** ([<file>](<permalink>)): <what changed and why>
 
 ## Evidence
 
-- **Before:** <screenshot/output/failing test run>
-  **After:** <screenshot/output/passing test run>
+<proof the change works>
+
+## Testing
+
+> [!NOTE]
+> <before>
+> <after>
+
+Steps:
+
+1. <step>: <what to inspect>
 
 ## Merge Danger
 
-**Door:** <one-way or two-way>
-
-<optional: description>
-
-**Blast Radius:** <one-word description>
-
-<optional: potential ramifications of merge>
+**Door:** two-way | one-way. <how to revert>
+**Blast Radius:** <short label>. <bullets only if non-obvious>
 ```
 
-## Sections
+The PR body is done when every placeholder holds a real value (a fetched ticket link, a permalink at the head commit, a URL that resolves) or its line is gone.
 
-Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+## Summary
 
-### Summary
+- **Issue:** the ticket key, linked. One line per ticket. Leave the line out when there is no ticket.
+- **The sentences:** what was wrong or missing, then what is true after this PR. Add the background a reviewer needs to see why it matters, and stop there.
 
-Pick the smallest view that makes the key point clear.
+## Key changes
 
-- Show logic or an algorithm as pseudocode:
+- **Intended behaviour changes:** a brief note of each change other code, logs, or contracts will notice. Leave the heading out when there are none.
+- **Visual:** include one when it shows the shape of the change faster than the bullets. Read [`../show-me/SKILL.md`](../show-me/SKILL.md) and pick the smallest view it describes (pseudocode, call tree, component tree, file tree, Mermaid, or a `diff` sketch), written as a Markdown code block. Place it above the bullets it supports.
+- **Bullets:** one per area of change, with a bold area name, a permalink to the file at the head commit, and what changed and why in one line.
 
-```text
-on(save)
-  if content is unchanged
-    return cached result
-  write new content
-  return fresh result
-```
+## Evidence
 
-- Show runtime control flow as a call tree:
+Required. Proof that the change works as intended.
 
-```text
-submitForm
-  createSession
-    persistPrompt
-    launchAgent
-  navigateToSession
-```
+- For a visual change: before and after screenshots or a recording.
+- Otherwise: the observable result, such as the response, log line, or rendered output, before and after. For a bug fix, name the test that failed before and passes now.
 
-- Show UI structure as a component tree, including state and module boundaries that matter:
+## Testing
 
-```text
-<SessionPage> (apps/example/src/routes/session.tsx)
-  useSessionEvents()
-  <SessionToolbar>
-    <RunSkillButton> (packages/ui)
-```
+What a reviewer does to see the change for themselves.
 
-- Show file responsibility or a broad refactor as a shallow file tree:
+- **The note:** how the behaviour looks or feels before this PR, then after it.
+- **Steps:** numbered actions a reviewer performs, each with the exact URL, branch, or environment, and what to inspect. Confirm each step works before writing it.
 
-```text
-src/
-├── commands/       # parses user actions
-├── sessions/       # owns session state
-└── transport/      # sends API requests
-```
+## Merge Danger
 
-- Show component interaction, control flow, or data flow with Mermaid:
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant UI
-    participant Daemon
-    User->>UI: choose command
-    UI->>Daemon: send expanded prompt
-    Daemon-->>UI: stream result
-```
-
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
-
-For a component change:
-
-```diff
- <SessionPage>
-   useSessionEvents()
-   <SessionToolbar>
-+    <RunSkillButton />
-   <SessionTimeline>
-+    <SkillResultCard />
-```
-
-For a file-layout change:
-
-```diff
- src/
- ├── commands/
-+│   └── show-me.ts       # expands the slash command
- ├── sessions/
--└── transport.ts
-+└── transport/
-+    ├── client.ts
-+    └── stream.ts
-```
-
-For a call-tree or call-stack change:
-
-```diff
- submitForm
-   createSession
-     persistPrompt
-+    expandSkillMention
-     launchAgent
--  navigateToSession
-+  navigateToSession
-+    subscribeToEvents
-```
-
-For a state or control-flow change:
-
-```diff
- on(save)
--  write content
-+  if content is unchanged
-+    return cached result
-+  write new content
-+  invalidate cache
-```
-
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
-
-```ts
-function expandSkill(command: string): string {
-  const skillName = command.slice(1);
-  return `use the ${skillName} skill`;
-}
-```
-
-#### Guidance
-
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
-
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
-
-### Evidence
-
-Concrete evidence that the change works. Show a before and after.
-
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
-
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
-
-### Merge Danger
-
-Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
-
-The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.
+- **Door:** two-way when a revert fully undoes the change, one-way when it leaves something behind (a migration, a sent message, deleted data, a published contract). Add the revert path in one line.
+- **Blast Radius:** a short label for the widest reach of a failure, such as one page, every consumer of an API, or all mobile layouts. Add bullets only for reach a reviewer would not guess.
