@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-Each Simplicity finding names a concrete existing replacement (a dependency, org library, framework feature, or existing repo or org pattern, ideally linked), or the Simplicity section states that none was found after searching.
+Every issue about hand-rolled code or a new pattern names a concrete existing replacement (a dependency, org library, framework feature, or existing repo or org pattern, ideally linked), and the review shows the org code search was run.
