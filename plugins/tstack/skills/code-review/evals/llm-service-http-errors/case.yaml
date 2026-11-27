@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: llm-service-http-errors
+expected_outcome: |
+  A three-axis review (Standards, Spec, Simplicity) of the PR with file:line findings, a Simplicity axis that names existing utilities or org patterns for any hand-rolled code, and a closing summary.

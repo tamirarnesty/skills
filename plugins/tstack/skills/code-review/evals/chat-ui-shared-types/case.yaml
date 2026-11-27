@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: chat-ui-shared-types
+expected_outcome: |
+  A three-axis review of a small frontend refactor with file:line findings, low-value test and comment checks, and a closing summary.
