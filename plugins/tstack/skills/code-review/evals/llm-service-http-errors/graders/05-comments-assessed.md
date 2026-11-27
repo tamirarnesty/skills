@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-The review explicitly applies a deletion test to comments or docstrings the PR adds or changes, or states the PR adds none.
+The review names each comment or docstring the PR adds or changes with a keep or delete verdict, or states the PR adds or changes none.

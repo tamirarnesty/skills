@@ -94,7 +94,7 @@ If the spec is missing, skip the Spec sub-agent and note this in the final repor
 
 ### 5. Report the issues and what to do
 
-Merge the three reports into one list of issues. Combine findings that share a root cause into one issue, and drop any finding the evidence in the reports does not support. Order the issues by what to fix first.
+Merge the three reports. Combine findings that share a root cause into one issue, and order the issues by what to fix first. Findings that are real but small (a stale link, a test that guards nothing, a comment to delete) go under **Smaller fixes**, one line each. A finding leaves the report only when the evidence disproves it; being minor moves it to Smaller fixes.
 
 ```markdown
 ## Issues
@@ -103,6 +103,10 @@ Merge the three reports into one list of issues. Combine findings that share a r
    <what is wrong and what it causes, one or two sentences>
    **Fix:** <the change that removes the root cause, naming the existing pattern, library, or utility when there is one>
 
+## Smaller fixes
+
+- [`file:line`](<permalink>): <what to change>
+
 ## Next steps
 
 <the direction to take from here: which fixes to make now and in what order, which issue needs a decision from the user first, and what to re-review after the fixes>
@@ -110,7 +114,7 @@ Merge the three reports into one list of issues. Combine findings that share a r
 
 Each fix targets the source of the problem: the design, type, or shared code that lets it happen, rather than a guard where it shows up. When several issues share one source, the next steps say so and fix it once.
 
-The review is done when every finding from the three reports is either in an issue or dropped for lack of evidence, and the next steps leave the user knowing what to do next.
+The review is done when every finding from the three reports is in an issue, in Smaller fixes, or named as disproved by the evidence, and the next steps leave the user knowing what to do next.
 
 ## Why separate axes
 
