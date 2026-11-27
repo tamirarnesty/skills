@@ -33,6 +33,9 @@ Invoke as `/tstack:<name>` in Claude Code and `/<name>` in Cursor. Model-invoked
 | Skill | Replaces | What it does |
 | --- | --- | --- |
 | `voice` | personal `~/.agents/skills/tamir-voice` | My writing voice for anything other people read: Slack, PR and review text, Jira comments, emails. |
+| `pr-score` | personal `~/.agents/skills/pr-score` | Merge-confidence score (1-5) with severity-ranked findings, fixes and ticket gaps, backed by checks run at head. |
+| `pr-walkthrough` | personal `~/.agents/skills/pr-walkthrough` | Walks a reviewer through a PR: summary, diagram, and collapsed detail for consequential changes. |
+| `pr-brief` | personal `~/.agents/skills/pr-brief` | Runs `pr-score` then `pr-walkthrough` in one pass. |
 
 ### Vendored from other sources
 
@@ -57,5 +60,5 @@ From [mattpocock/skills](https://github.com/mattpocock/skills) 1.3.2, covering e
 Run after this repo's skills are on `main`:
 
 1. Claude Code: `claude plugin marketplace add tamirarnesty/skills`, `claude plugin install tstack@tstack --scope user`, then `claude plugin disable mattpocock-skills@mattpocock`.
-2. Remove the personal `gh-stack`, `show-me` and `tamir-voice` copies so only the `tstack` ones load: `rm -r ~/.claude/skills/gh-stack ~/.agents/skills/gh-stack ~/.claude/skills/tamir-voice ~/.agents/skills/tamir-voice ~/.claude/skills/show-me ~/.agents/skills/show-me` (Cursor and other harnesses read `~/.agents/skills`).
+2. Remove the personal `gh-stack`, `show-me`, `tamir-voice` and `pr-*` copies so only the `tstack` ones load: `rm -r ~/.claude/skills/gh-stack ~/.agents/skills/gh-stack ~/.claude/skills/tamir-voice ~/.agents/skills/tamir-voice ~/.claude/skills/show-me ~/.agents/skills/show-me ~/.claude/skills/pr-{brief,score,walkthrough} ~/.agents/skills/pr-{brief,score,walkthrough}` (Cursor and other harnesses read `~/.agents/skills`).
 3. Cursor: install `tamirarnesty/skills` from Customize > Plugins > From GitHub Repository, then turn off the `mattpocock-skills` plugin there.
