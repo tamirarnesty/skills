@@ -8,6 +8,7 @@
 - [Restructuring a stack](#restructuring-a-stack)
 - [Branch belongs to several stacks (exit 6)](#branch-belongs-to-several-stacks-exit-6)
 - [Driving stacks from another tool or worktree](#driving-stacks-from-another-tool-or-worktree)
+- [Tree-shaped stacks](#tree-shaped-stacks)
 - [Stack file is locked (exit 8)](#stack-file-is-locked-exit-8)
 - [An interrupted modify session (exit 10)](#an-interrupted-modify-session-exit-10)
 
@@ -186,3 +187,20 @@ Resolve and stage in the worktree reported by the conflict, then invoke `modify 
 any linked worktree. A later conflict can be in a different owner. Abort reverses owner-local
 renames, restores only operation-touched refs, and deletes only proven operation-created refs,
 never worktrees. Missing owners, externally changed refs, or save failures retain the journal.
+
+## Tree-shaped stacks
+
+gh-stack models a stack as one line. When PRs branch into a tree (one parent with two or more child PRs), manage the tree with plain Git and keep gh-stack for any linear run inside it.
+
+1. Read each PR's real base before moving anything: `gh pr view <n> --json baseRefName,headRefName`.
+2. Back up every branch you will move: `git update-ref refs/backup/<branch> <branch>`.
+3. After changing a parent, replay each child onto it, parents before children:
+
+   ```bash
+   git rebase --update-refs --onto <parent> refs/backup/<parent> <child>
+   ```
+
+   `--update-refs` carries along any branch stacked inside the replayed range, so a linear run above the child moves in one step. Starting from the backed-up parent tip replays only the child's own commits, so commits the parent already rewrote are never replayed twice.
+4. Run lint and tests on each moved tip, push each with `--force-with-lease`, and confirm with `git diff refs/backup/<branch> <branch>` that only the intended change moved.
+5. Delete the backups: `git update-ref -d refs/backup/<branch>`.
+

@@ -8,6 +8,8 @@ description: >
 metadata:
   author: github
   version: "0.2.0"
+  upstream: "github/gh-stack@80b6d6e skills/gh-stack"
+  changes: "Adds a tree-shaped stacks recovery path to references/troubleshooting.md."
 ---
 
 # gh-stack
@@ -191,4 +193,5 @@ Open the reference whose trigger matches the task; no need to preload all three.
 - `references/commands.md` — read when a command fails unexpectedly or you need its preconditions,
   side effects, atomicity, or ordering guarantees.
 - `references/troubleshooting.md` — read on a rebase conflict, after a squash-merge, on local and
-  remote divergence, when restructuring a stack, or when driving stacks from another tool.
+  remote divergence, when restructuring a stack, when PRs branch into a tree, or when driving
+  stacks from another tool.
