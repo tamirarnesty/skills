@@ -1,0 +1,7 @@
+{
+  "name": "tstack",
+  "version": "0.1.0",
+  "description": "Tamir's skills: improved forks of upstream skills plus his own, for Claude Code, Cursor, and any Agent Skills harness.",
+  "author": { "name": "Tamir Arnesty" },
+  "repository": "https://github.com/tamirarnesty/skills"
+}

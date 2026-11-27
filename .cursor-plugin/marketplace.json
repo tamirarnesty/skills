@@ -1,0 +1,16 @@
+{
+  "name": "tstack",
+  "owner": {
+    "name": "Tamir Arnesty"
+  },
+  "metadata": {
+    "description": "Tamir's skills: improved forks of upstream skills plus his own, for Claude Code, Cursor, and any Agent Skills harness."
+  },
+  "plugins": [
+    {
+      "name": "tstack",
+      "source": "./plugins/tstack",
+      "description": "Tamir's skills: improved forks of upstream skills plus his own, for Claude Code, Cursor, and any Agent Skills harness."
+    }
+  ]
+}
