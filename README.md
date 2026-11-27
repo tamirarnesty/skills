@@ -27,6 +27,12 @@ Invoke as `/tstack:<name>` in Claude Code and `/<name>` in Cursor. Model-invoked
 | `code-review` | `mattpocock-skills:code-review` | Stacked PRs review against the parent PR's head and read sibling PRs before calling code unused. Standards sources add `docs/STANDARDS.md`, `AGENTS.md`, `CLAUDE.md` and the org manifest. Scope the PR marks as intended is reviewed for quality, not flagged. |
 | `gh-stack` | personal `~/.agents/skills/gh-stack` (0.0.8) | Upstream 0.2.0, plus a tree-shaped stacks recovery path in `references/troubleshooting.md`. |
 
+### My own
+
+| Skill | Replaces | What it does |
+| --- | --- | --- |
+| `tamir-voice` | personal `~/.agents/skills/tamir-voice` | My writing voice for anything other people read: Slack, PR and review text, Jira comments, emails. |
+
 ### Vendored unchanged
 
 From [mattpocock/skills](https://github.com/mattpocock/skills) 1.3.2, covering every upstream skill you have used, so the upstream plugin can be disabled: `codebase-design`, `domain-modeling`, `grill-me`, `grill-with-docs`, `handoff`, `implement`, `improve-codebase-architecture`, `pr`, `prototype`, `retro`, `setup-matt-pocock-skills`, `tdd`, `teach`, `to-spec`, `to-tickets`, `wizard`, `writing-for-agents`. Licenses and upstream commits are in `plugins/tstack/vendor/`.
@@ -36,5 +42,5 @@ From [mattpocock/skills](https://github.com/mattpocock/skills) 1.3.2, covering e
 Run after this repo's skills are on `main`:
 
 1. Claude Code: `claude plugin marketplace add tamirarnesty/skills`, `claude plugin install tstack@tstack --scope user`, then `claude plugin disable mattpocock-skills@mattpocock`.
-2. Remove the personal `gh-stack` copy so only `tstack:gh-stack` loads: `rm ~/.claude/skills/gh-stack ~/.agents/skills/gh-stack` (Cursor and other harnesses read `~/.agents/skills`).
+2. Remove the personal `gh-stack` and `tamir-voice` copies so only the `tstack` ones load: `rm -r ~/.claude/skills/gh-stack ~/.agents/skills/gh-stack ~/.claude/skills/tamir-voice ~/.agents/skills/tamir-voice` (Cursor and other harnesses read `~/.agents/skills`).
 3. Cursor: install `tamirarnesty/skills` from Customize > Plugins > From GitHub Repository, then turn off the `mattpocock-skills` plugin there.
