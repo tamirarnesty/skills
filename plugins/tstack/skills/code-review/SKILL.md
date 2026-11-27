@@ -1,17 +1,18 @@
 ---
 name: code-review
-description: "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\"."
+description: "Review a PR, branch, or work-in-progress diff along three axes in parallel sub-agents: Standards (the repo's documented standards and a code-smell baseline), Spec (what the ticket asked for), and Simplicity (simplest solution, existing org patterns and utilities, low-value tests, comments that fail the deletion test), then summarize the findings. Use when the user asks to review a PR (URL or number), a branch, local changes, or \"review since X\"."
 metadata:
   upstream: "mattpocock/skills@a496f55 skills/engineering/code-review"
-  changes: "Stacked-PR fixed point, AGENTS.md and org standards in the Standards sources, accepted scope reviewed for quality instead of flagged."
+  changes: "Adds the Simplicity axis and a closing summary; stacked-PR fixed point; AGENTS.md and org standards in the Standards sources; accepted scope reviewed for quality."
 ---
 
-Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
+Three-axis review of the diff between `HEAD` and a fixed point:
 
 - **Standards**: does the code conform to this repo's documented coding standards?
 - **Spec**: does the code faithfully implement the originating issue / spec?
+- **Simplicity**: is this the least code and the most familiar shape that solves the problem?
 
-Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings. Start every sub-agent with a fresh context window.
+All three axes run as **parallel sub-agents** (`Agent` in Claude Code, `Task` in Cursor) so they don't pollute each other's context, then this skill aggregates their findings. Start every sub-agent with a fresh context window.
 
 The issue tracker should have been provided to you. If not, tell the user to run `/setup`.
 
@@ -19,7 +20,7 @@ The issue tracker should have been provided to you. If not, tell the user to run
 
 ### 1. Pin the fixed point
 
-Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.). If they didn't specify one, ask for it.
+Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.). When they give a PR URL or number, the fixed point is the PR's base: read it with `gh pr view <pr> --json baseRefName,headRefName`, and review the PR's head (check it out, or read files with `git show <head>:<path>` when the working tree is elsewhere). If they gave neither, ask for it.
 
 For a PR in a stack, the fixed point is the parent PR's head, not `main`: read it from `gh pr view <n> --json baseRefName`, and `git fetch` first so both tips are current. Before calling code unused or out of scope, read the other open PRs in the stack; a later PR often consumes it.
 
@@ -60,9 +61,9 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 - **Middle Man**: a class or function that mostly just delegates onward. → cut it, call the real target direct.
 - **Refused Bequest**: a subclass or implementer that ignores or overrides most of what it inherits. → drop the inheritance, use composition.
 
-### 4. Spawn both sub-agents in parallel
+### 4. Spawn the three sub-agents in parallel
 
-Issue both sub-agent calls together, in the foreground, and aggregate the reports they return.
+Issue all three sub-agent calls together, in the foreground, and aggregate the reports they return.
 
 **Standards sub-agent prompt** should include:
 
@@ -76,19 +77,34 @@ Issue both sub-agent calls together, in the foreground, and aggregate the report
 - The path or fetched contents of the spec.
 - The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep), except changes the PR description or the user marks as intended: review those for quality instead; (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
 
+**Simplicity sub-agent prompt** should include:
+
+- The diff command and commit list.
+- The repo's GitHub org (from `gh repo view --json owner`) and the repo's dependency manifests (`package.json`, `pyproject.toml`, `mix.exs`, etc.).
+- The brief: "Find code a reviewer would ask to be simpler, and for each finding name the existing thing to use instead. Search before claiming: read the dependency manifests, search the org (`gh search code --owner <org>`), and check the framework's own features. Look through four lenses:
+  (a) **Simplest solution**: a smaller or more direct shape would do the same job, or the change introduces a new pattern where the org or repo already has one for this problem; name the existing pattern with a link.
+  (b) **Hand-rolled code**: custom logic that a dependency already in the manifest, an org library, a framework feature, or a battle-tested package provides; name it.
+  (c) **Low-value tests**: tests that pass whether or not the behaviour works: tautological (asserting what the test itself set up), contract or snapshot tests of internals, tests of mocks, tests importing private internals, or tests that a removed thing stays removed. A test earns its place when breaking the behaviour turns it red.
+  (d) **Comments**: apply the deletion test to every added or changed comment and docstring: if deleting it loses nothing a reader needs, it goes. A comment that explains what code does points at a naming or structure fix; ticket keys in code belong only in a `TODO(KEY)` for a real follow-up.
+  Report each finding with the lens, `file:line`, the issue, and the replacement. Under 400 words."
+
 If the spec is missing, skip the Spec sub-agent and note this in the final report.
 
 ### 5. Aggregate
 
-Present the two reports under `## Standards` and `## Spec` headings, verbatim or lightly cleaned. Do **not** merge or rerank findings, because the two axes are deliberately separate (see _Why two axes_).
+Present the three reports under `## Standards`, `## Spec`, and `## Simplicity` headings, verbatim or lightly cleaned. Keep the axes separate: each one keeps its own findings and order (see _Why separate axes_).
 
-End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes: that's the reranking the separation exists to prevent.
+### 6. Summarize the findings
 
-## Why two axes
+End with `## Summary`: a short list of the findings worth acting on, most consequential first, each one line with its axis and `file:line`. Then one line per axis: its finding count and its worst issue. The review is done when every finding from every axis is either in the summary list or counted in its axis line.
 
-A change can pass one axis and fail the other:
+## Why separate axes
+
+A change can pass one axis and fail another:
 
 - Code that follows every standard but implements the wrong thing → **Standards pass, Spec fail.**
 - Code that does exactly what the issue asked but breaks the project's conventions → **Spec pass, Standards fail.**
 
-Reporting them separately stops one axis from masking the other.
+- Code that is correct and conventional but rebuilds what a library already does → **Standards and Spec pass, Simplicity fail.**
+
+Reporting them separately stops one axis from masking another.
