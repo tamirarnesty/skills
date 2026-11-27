@@ -1,9 +1,9 @@
 ---
 name: code-review
-description: "Review a PR, branch, or work-in-progress diff along three axes in parallel sub-agents: Standards (the repo's documented standards and a code-smell baseline), Spec (what the ticket asked for), and Simplicity (simplest solution, existing org patterns and utilities, low-value tests, comments that fail the deletion test), then summarize the findings. Use when the user asks to review a PR (URL or number), a branch, local changes, or \"review since X\"."
+description: "Review a PR, branch, or work-in-progress diff along three axes in parallel sub-agents: Standards (the repo's documented standards and a code-smell baseline), Spec (what the ticket asked for), and Simplicity (simplest solution, existing org patterns and utilities, low-value tests, comments that fail the deletion test), then reports the issues with root-cause fixes and next steps. Use when the user asks to review a PR (URL or number), a branch, local changes, or \"review since X\"."
 metadata:
   upstream: "mattpocock/skills@a496f55 skills/engineering/code-review"
-  changes: "Adds the Simplicity axis and a closing summary; stacked-PR fixed point; AGENTS.md and org standards in the Standards sources; accepted scope reviewed for quality."
+  changes: "Adds the Simplicity axis; reports issues with root-cause fixes and next steps instead of per-axis sections; stacked-PR fixed point; AGENTS.md and org standards in the Standards sources; accepted scope reviewed for quality."
 ---
 
 Three-axis review of the diff between `HEAD` and a fixed point:
@@ -12,7 +12,7 @@ Three-axis review of the diff between `HEAD` and a fixed point:
 - **Spec**: does the code faithfully implement the originating issue / spec?
 - **Simplicity**: is this the least code and the most familiar shape that solves the problem?
 
-All three axes run as **parallel sub-agents** (`Agent` in Claude Code, `Task` in Cursor) so they don't pollute each other's context, then this skill aggregates their findings. Start every sub-agent with a fresh context window.
+All three axes run as **parallel sub-agents** (`Agent` in Claude Code, `Task` in Cursor) so they don't pollute each other's context, then this skill merges their findings into one list of issues to fix. Start every sub-agent with a fresh context window.
 
 The issue tracker should have been provided to you. If not, tell the user to run `/setup`.
 
@@ -90,13 +90,25 @@ Issue all three sub-agent calls together, in the foreground, and aggregate the r
 
 If the spec is missing, skip the Spec sub-agent and note this in the final report.
 
-### 5. Aggregate
+### 5. Report the issues and what to do
 
-Present the three reports under `## Standards`, `## Spec`, and `## Simplicity` headings, verbatim or lightly cleaned. Keep the axes separate: each one keeps its own findings and order (see _Why separate axes_).
+Merge the three reports into one list of issues. Combine findings that share a root cause into one issue, and drop any finding the evidence in the reports does not support. Order the issues by what to fix first.
 
-### 6. Summarize the findings
+```markdown
+## Issues
 
-End with `## Summary`: a short list of the findings worth acting on, most consequential first, each one line with its axis and `file:line`. Then one line per axis: its finding count and its worst issue. The review is done when every finding from every axis is either in the summary list or counted in its axis line.
+1. **<issue in a few words>** ([`file:line`](<permalink>))
+   <what is wrong and what it causes, one or two sentences>
+   **Fix:** <the change that removes the root cause, naming the existing pattern, library, or utility when there is one>
+
+## Next steps
+
+<the direction to take from here: which fixes to make now and in what order, which issue needs a decision from the user first, and what to re-review after the fixes>
+```
+
+Each fix targets the source of the problem: the design, type, or shared code that lets it happen, rather than a guard where it shows up. When several issues share one source, the next steps say so and fix it once.
+
+The review is done when every finding from the three reports is either in an issue or dropped for lack of evidence, and the next steps leave the user knowing what to do next.
 
 ## Why separate axes
 
@@ -107,4 +119,4 @@ A change can pass one axis and fail another:
 
 - Code that is correct and conventional but rebuilds what a library already does → **Standards and Spec pass, Simplicity fail.**
 
-Reporting them separately stops one axis from masking another.
+Running them as separate sub-agents stops one axis from masking another; the report then merges what they found into one list of things to fix.
