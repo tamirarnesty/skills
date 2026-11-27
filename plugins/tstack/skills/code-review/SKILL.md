@@ -81,12 +81,12 @@ Issue all three sub-agent calls together, in the foreground, and aggregate the r
 
 - The diff command and commit list.
 - The repo's GitHub org (from `gh repo view --json owner`) and the repo's dependency manifests (`package.json`, `pyproject.toml`, `mix.exs`, etc.).
-- The brief: "Find code a reviewer would ask to be simpler, and for each finding name the existing thing to use instead. Search before claiming: read the dependency manifests, search the org (`gh search code --owner <org>`), and check the framework's own features. Look through four lenses:
+- The brief: "Find code a reviewer would ask to be simpler, and for each finding name the existing thing to use instead. Start by searching, before judging anything: read the dependency manifests, then run `gh search code --owner <org> <term>` for each new helper, pattern, or concept the diff introduces, and check the framework's own features. Look through four lenses:
   (a) **Simplest solution**: a smaller or more direct shape would do the same job, or the change introduces a new pattern where the org or repo already has one for this problem; name the existing pattern with a link.
   (b) **Hand-rolled code**: custom logic that a dependency already in the manifest, an org library, a framework feature, or a battle-tested package provides; name it.
   (c) **Low-value tests**: tests that pass whether or not the behaviour works: tautological (asserting what the test itself set up), contract or snapshot tests of internals, tests of mocks, tests importing private internals, or tests that a removed thing stays removed. A test earns its place when breaking the behaviour turns it red.
   (d) **Comments**: apply the deletion test to every added or changed comment and docstring: if deleting it loses nothing a reader needs, it goes. A comment that explains what code does points at a naming or structure fix; ticket keys in code belong only in a `TODO(KEY)` for a real follow-up.
-  Report each finding with the lens, `file:line`, the issue, and the replacement. Under 400 words."
+  Report each finding with the lens, `file:line`, the issue, and the replacement. End with a **Searched** line listing each org search you ran and what it turned up; the report is complete only with that line. Under 400 words."
 
 If the spec is missing, skip the Spec sub-agent and note this in the final report.
 
